@@ -1,0 +1,101 @@
+define OSC 4 
+
+DEFINE LCD_DREG PORTB 
+DEFINE LCD_DBIT 4     
+DEFINE LCD_RSREG PORTA
+DEFINE LCD_RSBIT 1    
+DEFINE LCD_EREG PORTA 
+DEFINE LCD_EBIT 2     
+DEFINE LCD_BITS 4     
+DEFINE LCD_LINES 2 
+DEFINE LCD_COMMANDUS 2000
+DEFINE LCD_DATAUS 50         
+
+'''''''''''''''''''''''''''''
+
+        G1 VAR BYTE
+        G2 VAR BYTE
+        I VAR BYTE
+        VELOCIDA VAR WORD
+ G1=74
+ G2=25
+        FLAG VAR BIT
+        CONT VAR BYTE 
+''''''''''''''''''''''''''''''''
+
+  'Garabato 1 posicion 0
+ LCDOUT $FE,$40
+     LCDOUT $0E,$0E,$0E,$04,$1F,$04,$DA,$12
+  'Garabato 2 posicion 8
+LCDOUT $FE,$48
+     LCDOUT $0E,$0E,$0E,$04,$1F,$04,$DA,$12
+
+     'ESCRITUDA EN DD RAM POSICION 54
+LCDOUT $FE,128+G1
+LCDOUT 0
+     'ESCRITUDA EN DD RAM POSICION 24
+ LCDOUT $FE,128+G2
+LCDOUT 1
+
+     'ESCRITUDA EN DD RAM POSICION 64
+LCDOUT $FE,$C0
+LCDOUT "SISTEMAS"
+     'ESCRITUDA EN DD RAM POSICION 27
+
+LCDOUT $FE,$9C
+LCDOUT "SISTEMAS"
+
+FLAG =1
+CONT=10
+VELOCIDA=0
+GOSUB DESPLAZA
+MOVGAR:
+       FOR I= 1 TO 15
+           LCDOUT $FE,128+G1
+           LCDOUT " "          
+           LCDOUT $FE,128+G2
+           LCDOUT " "   
+           G1=G1+1
+           G2=G2-1
+           LCDOUT $FE,128+G1
+           LCDOUT 0         
+           LCDOUT $FE,128+G2
+           LCDOUT 1       
+           PAUSE 300 
+       NEXT I 
+
+PAUSE 500
+FLAG =0
+CONT=10
+VELOCIDA=200
+GOSUB DESPLAZA
+
+PAUSE 400
+
+FLAG =1
+CONT=20
+VELOCIDA=200
+GOSUB DESPLAZA
+
+PAUSE 400
+
+FLAG =0
+CONT=10
+VELOCIDA=200
+ GOSUB DESPLAZA
+    
+STOP
+DESPLAZA:            
+       FOR I=1 TO CONT  
+           IF FLAG=1 THEN  LCDOUT $FE,$18
+           IF FLAG=0 THEN  LCDOUT $FE,$1C   
+           PAUSE VELOCIDA    
+       NEXT I  
+RETURN
+
+
+     
+
+  
+
+
